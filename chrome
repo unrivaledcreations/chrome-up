@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 1 ]]; then
+    profile="default"
+else
+    profile=$1
+fi
+
+/usr/bin/install -d "${HOME}/.chrome/${profile}"
+
+switches="--no-first-run --no-default-browser-check --no-referrers --aggressive-cache-discard --aggressive-tab-discard --disable-cache --disable-application-cache --disable-offline-load-stale-cache --disk-cache-size=0 --incognito --user-data-dir=${HOME}/.chrome/${profile}"
+
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ${switches} 1> /dev/null 2>/dev/null &
