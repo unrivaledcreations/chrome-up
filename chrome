@@ -1,13 +1,49 @@
 #!/usr/bin/env bash
 
-if [[ $# -ne 1 ]]; then
-    profile="default"
-else
-    profile=$1
+usage()
+{
+    echo -e 'Usage:\n'
+    echo -e $(basename $0)' [\x1B[4mprofile directory\x1B[0m [-n | --new]] [-r | --referrer]\n'
+    echo -e '\x1B[4mprofile directory\x1B[0m\tThe user data directory (e.g.: `school`, `shopping`, `dev/projectx`, etc.)'
+    echo -e '\x1B[1m[-n | --new]\x1B[0m\t\tCreate a new profile directory in `~/.chrome` with the supplied "profile directory" name'
+    echo -e '\x1B[1m[-r | --referrer]\x1B[0m\tUse HTTP referrer headers (referrers disabled by default)'
+}
+
+referrers_flag=" --no-referrers"
+profile="default"
+enable_new="false"
+
+for arg
+do
+
+    if [[ ${arg} == "--new" ]] || [[ ${arg} == "-n" ]]; then
+        enable_new="true"
+    elif [[ ${arg} == "--referrer" ]] || [[ ${arg} == "-r" ]]; then
+        referrers_flag=""
+    elif [[ ${arg} == "--help" ]] || [[ ${arg} == "-h" ]]; then
+        usage
+        exit
+    elif [[ ${arg:0:1} != "-" ]]; then
+        profile=${arg}
+    else
+        usage
+        exit 1
+    fi
+done
+
+if [[ ! -f "${HOME}/.chrome/${profile}/Default/Preferences" ]]; then
+    if [[ ${enable_new} == "true" ]]; then
+        if [[ -d "${HOME}/.chrome/${profile}" ]]; then
+            echo -e "\x60${HOME}/.chrome/${profile}\x60 exists; aborting."
+            exit 1
+        fi
+        /usr/bin/install -d "${HOME}/.chrome/${profile}"
+    else
+        echo -e "Must specify [--new | -n] to create the profile directory \x60${HOME}/.chrome/${profile}\x60."
+        exit 1
+    fi
 fi
 
-/usr/bin/install -d "${HOME}/.chrome/${profile}"
-
-switches="--no-first-run --no-default-browser-check --no-referrers --aggressive-cache-discard --aggressive-tab-discard --disable-cache --disable-application-cache --disable-offline-load-stale-cache --disk-cache-size=0 --incognito --user-data-dir=${HOME}/.chrome/${profile}"
+switches="--no-first-run --no-default-browser-check${referrers_flag} --aggressive-cache-discard --aggressive-tab-discard --disable-cache --disable-application-cache --disable-offline-load-stale-cache --disk-cache-size=0 --incognito --user-data-dir=${HOME}/.chrome/${profile}"
 
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ${switches} 1> /dev/null 2>/dev/null &
