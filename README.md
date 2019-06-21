@@ -61,9 +61,21 @@ Note that each "directory namespace" has its own set of bookmarks, too, so `chro
 
 This is a powerful tool for privacy, by the way. Because every time you launch Chrome in a new directory namespace, Chrome has no way of seeing the bookmarks, cookies, history, extensions, and so forth as used by the other namespaces since it cannot see into those other directories. So besides development work, using the Chrome launcher can increase your privacy and security, too.
 
+### Options
+
+The Chrome-Up script has the following command line arguments:
+
+| Argument | Purpose |
+|---|---|
+| `-n`&nbsp;&#124;&nbsp;`--new` | Create a new profile directory in `~/.chrome` with the supplied "profile directory" name |
+| `-r`&nbsp;&#124;&nbsp;`--referrer` | Use normal HTTP referrer headers (referrers disabled by default) |
+| `-w`&nbsp;&#124;&nbsp;`--normal-window` | Start up in a normal browser window (opens in incognito mode by default) |
+| `-v`&nbsp;&#124;&nbsp;`--version` | Displays the current version |
+| `-h`&nbsp;&#124;&nbsp;`--help` | Displays a help screen |
+
 ## Uninstall
 
-If it sucks, you can get rid of Chrome-Up! by simply deleting the `.chrome` directory:
+You can remove the Chrome-Up script by simply deleting the `.chrome` directory:
 
 ```
 rm -fR ~/.chrome
@@ -77,6 +89,8 @@ sudo rm /usr/local/bin/chrome
 
 ## Caveats
 
-1. The `HTTP-REFERER` header is disabled by default as a security measure. When developing web applications, disabled referrers prevent sensitive information disclosure, which is especially useful in development and staging environments. However, this will cause some web apps that, against best practices, actually use `HTTP-REFERER` headers for authorization or other such things. Poorly engineered eCommerce sites are particularly vulnerable to this; and some sites will even fire off CSRF ([cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery)) errors when you attempt to use these sites when Chrome is using the `--no-referrers` command line argument. In those cases, launch Chrome Up! using the `-r` or `--referrer` command line arguments.
+1. The `HTTP-REFERER` header is disabled by default as a security measure. When developing web applications, disabled referrers prevent sensitive information disclosure, which is especially useful in development and staging environments. However, this will cause some web apps that, against best practices, actually use `HTTP-REFERER` headers for authorization or other such things. Poorly engineered eCommerce sites are particularly vulnerable to this; and some sites will even fire off CSRF ([cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery)) errors when you attempt to use these sites when Chrome is using the `--no-referrers` command line argument. In those cases, launch Chrome Up! using the `--referrer` command line argument.
 
-2. If you uninstall and remove `~/.chrome`, all bookmarks, cookies, history, extensions, and so forth for all Chrome profiles stored there will be destroyed. Back things up if there's anything important there. Removing these directories will not affect Google Sync, so if you use that, your Google profile will remain intact in the cloud.
+2. Some websites and web apps will detect "incognito mode" and block your access. You can either open a new window from the "File" menu; or launch your Google Chrome profile using the `--normal-window` command line argument.
+
+3. If you uninstall and remove `~/.chrome`, all bookmarks, cookies, history, extensions, and so forth for all Chrome profiles stored there will be destroyed. Back things up if there's anything important there. Removing these directories will not affect Google Sync, so if you use that, your Google profile will remain intact in the cloud.
