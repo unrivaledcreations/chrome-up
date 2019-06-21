@@ -1,15 +1,28 @@
 #!/usr/bin/env bash
 
+product="Chrome-Up - Google Chrome launcher for MacOS"
+version="v1.0.2"
+
+version()
+{
+    echo "${product} ${version}"
+}
+
 usage()
 {
-    echo -e 'Usage:\n'
-    echo -e $(basename $0)' [\x1B[4mprofile directory\x1B[0m [-n | --new]] [-r | --referrer]\n'
+    echo -e "usage: "$(basename $0)' [\x1B[4mprofile directory\x1B[0m [-n | --new]] [-r | --referrer] [-w | --normal-window]'
+    echo -e '       '$(basename $0)' [-v | --version]\n'
     echo -e '\x1B[4mprofile directory\x1B[0m\tThe user data directory (e.g.: `school`, `shopping`, `dev/projectx`, etc.)'
     echo -e '\x1B[1m[-n | --new]\x1B[0m\t\tCreate a new profile directory in `~/.chrome` with the supplied "profile directory" name'
-    echo -e '\x1B[1m[-r | --referrer]\x1B[0m\tUse HTTP referrer headers (referrers disabled by default)'
+    echo -e '\x1B[1m[-r | --referrer]\x1B[0m\tUse normal HTTP referrer headers (referrers disabled by default)'
+    echo -e '\x1B[1m[-w | --normal-window]\x1B[0m\tStart up in a normal browser window (opens in incognito mode by default)'
+    echo -e '\x1B[1m[-v | --version]\x1B[0m\tDisplays the current version'
+    echo
+    echo -e "Your \x1B[4mprofile directory\x1B[0m will be created here automatically: \x60\x1B[4m${HOME}/.chrome\x1B[0m\x60"
 }
 
 referrers_flag=" --no-referrers"
+incognito_flag=" --incognito"
 profile="default"
 enable_new="false"
 
@@ -18,8 +31,14 @@ do
 
     if [[ ${arg} == "--new" ]] || [[ ${arg} == "-n" ]]; then
         enable_new="true"
+    elif [[ ${arg} == "--normal-window" ]] || [[ ${arg} == "-w" ]]; then
+        incognito_flag=""
     elif [[ ${arg} == "--referrer" ]] || [[ ${arg} == "-r" ]]; then
         referrers_flag=""
+    elif [[ ${arg} == "--version" ]] || [[ ${arg} == "-v" ]]; then
+        version
+        echo -e "Type \x60chrome --help\x60 for usage instructions."
+        exit 0
     elif [[ ${arg} == "--help" ]] || [[ ${arg} == "-h" ]]; then
         usage
         exit
@@ -44,6 +63,6 @@ if [[ ! -f "${HOME}/.chrome/${profile}/Default/Preferences" ]]; then
     fi
 fi
 
-switches="--no-first-run --no-default-browser-check${referrers_flag} --aggressive-cache-discard --aggressive-tab-discard --disable-cache --disable-application-cache --disable-offline-load-stale-cache --disk-cache-size=0 --incognito --user-data-dir=${HOME}/.chrome/${profile}"
+switches="--no-first-run --no-default-browser-check${referrers_flag} --aggressive-cache-discard --aggressive-tab-discard --disable-cache --disable-application-cache --disable-offline-load-stale-cache --disk-cache-size=0${incognito_flag} --user-data-dir=${HOME}/.chrome/${profile}"
 
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ${switches} 1> /dev/null 2>/dev/null &
